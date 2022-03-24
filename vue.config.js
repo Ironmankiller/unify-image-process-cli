@@ -77,6 +77,7 @@ module.exports = {
     before: require('./mock/mock-server.js')
   },
   configureWebpack: config => {
+    config.devtool = process.env.NODE_ENV==="production"? false:"source-map"
     config.entry.app = './src/renderer/main.js'
     return {
       name: name,
