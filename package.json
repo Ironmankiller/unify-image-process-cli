@@ -1,10 +1,9 @@
 {
-  "name": "vue-element-admin",
-  "version": "4.4.0",
-  "description": "A magical vue admin. An out-of-box UI solution for enterprise applications. Newest development stack of vue. Lots of awesome features",
-  "author": "Pan <panfree23@gmail.com>",
+  "name": "unify-image-process",
+  "version": "0.0.2",
+  "description": "An unify image test software, developed base on vue-element-admin + electron.",
+  "author": "Ironmankiller <shipypy@163.com>",
   "scripts": {
-    "dev": "vue-cli-service serve",
     "lint": "eslint --ext .js,.vue src",
     "build:prod": "vue-cli-service build",
     "build:stage": "vue-cli-service build --mode staging",
@@ -12,8 +11,17 @@
     "new": "plop",
     "svgo": "svgo -f src/icons/svg --config=src/icons/svgo.yml",
     "test:unit": "jest --clearCache && vue-cli-service test:unit",
-    "test:ci": "npm run lint && npm run test:unit"
+    "test:ci": "npm run lint && npm run test:unit",
+    "copy": "node ./tools/copy-preload.js",
+    "dev:desktop": "npm run copy && vue-cli-service electron:serve",
+    "dev:web": "vue-cli-service serve",
+    "build:desktop": "npm run build:icon && npm run build:mac && npm run build:win",
+    "build:win": "vue-cli-service electron:build --legacy --windows --x64",
+    "build:mac": "vue-cli-service electron:build --legacy --macos",
+    "build:icon": "electron-icon-builder --input=./public/icon.png --output=public --flatten",
+    "build:web": "vue-cli-service build"
   },
+  "main": "background.js",
   "dependencies": {
     "axios": "0.18.1",
     "clipboard": "2.0.4",
@@ -22,12 +30,14 @@
     "driver.js": "0.9.5",
     "dropzone": "5.5.1",
     "echarts": "4.2.1",
+    "electron": "^13.0.0",
     "element-ui": "2.13.2",
     "file-saver": "2.0.1",
     "fuse.js": "3.4.4",
     "js-cookie": "2.2.0",
     "jsonlint": "1.6.3",
     "jszip": "3.2.1",
+    "mockjs": "1.0.1-beta3",
     "normalize.css": "7.0.0",
     "nprogress": "0.2.0",
     "path-to-regexp": "2.4.0",
@@ -56,6 +66,8 @@
     "chalk": "2.4.2",
     "chokidar": "2.1.5",
     "connect": "3.6.6",
+    "electron-devtools-installer": "^3.2.0",
+    "electron-icon-builder": "^2.0.1",
     "eslint": "6.7.2",
     "eslint-plugin-vue": "6.2.2",
     "html-webpack-plugin": "3.2.0",
@@ -70,6 +82,7 @@
     "serve-static": "1.13.2",
     "svg-sprite-loader": "4.1.3",
     "svgo": "1.2.0",
+    "vue-cli-plugin-electron-builder": "^2.1.1",
     "vue-template-compiler": "2.6.10"
   },
   "browserslist": [
@@ -90,7 +103,9 @@
     "element-ui",
     "boilerplate",
     "admin-template",
-    "management-system"
+    "management-system",
+    "electron",
+    "desktop"
   ],
   "license": "MIT",
   "lint-staged": {
@@ -106,6 +121,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/PanJiaChen/vue-element-admin.git"
+    "url": "git+https://github.com/Ironmankiller/unify-imageproc.git"
   }
 }

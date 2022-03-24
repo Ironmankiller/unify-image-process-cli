@@ -1,12 +1,12 @@
 'use strict'
 const path = require('path')
-const defaultSettings = require('./src/settings.js')
+const defaultSettings = require('./src/renderer/settings.js')
 
 function resolve(dir) {
   return path.join(__dirname, dir)
 }
 
-const name = defaultSettings.title || 'vue Element Admin' // page title
+const name = defaultSettings.title || 'Test Software' // page title
 
 // If your port is set to 80,
 // use administrator privileges to execute the command line.
@@ -17,6 +17,44 @@ const port = process.env.port || process.env.npm_config_port || 9527 // dev port
 
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
 module.exports = {
+  pluginOptions: {
+    electronBuilder: {
+      mainProcessFile: 'src/main/background.js',
+      builderOptions: {
+        appId: "unifytest.aia.hust.edu.cn",
+        productName: "统一图像测试软件",
+        icon: "./public/icons/icon.ico",
+        files: ["**/*", "static/*"],
+		    copyright: "Copyright © 2021 hust AIA",
+        extraFiles: {
+          from: './preload',
+          to: 'preload'
+        },
+        asar: true,
+        mac: {
+          icon: "./public/icon.png",
+          target: ["zip", "dmg"],
+          category: "com.unifytest-category.utilities"
+        },
+        win: {
+          icon: "./public/icons/icon.ico",
+          target: ["zip", "nsis"]
+        },
+        nsis: {
+          oneClick: false,
+          allowElevation: true,
+          allowToChangeInstallationDirectory: true,
+          installerIcon: "./public/icons/icon.ico",
+          uninstallerIcon: "./public/icons/icon.ico",
+          installerHeaderIcon: "./public/icons/icon.ico",
+          createDesktopShortcut: true,
+          createStartMenuShortcut: true,
+          license: "./LICENSE"
+        }
+      }
+    }
+  },
+	
   /**
    * You will need to set publicPath if you plan to deploy your site under a sub path,
    * for example GitHub Pages. If you plan to deploy your site to https://foo.github.io/bar/,
@@ -31,20 +69,21 @@ module.exports = {
   productionSourceMap: false,
   devServer: {
     port: port,
-    open: true,
+    open: false,
     overlay: {
       warnings: false,
       errors: true
     },
     before: require('./mock/mock-server.js')
   },
-  configureWebpack: {
-    // provide the app's title in webpack's name field, so that
-    // it can be accessed in index.html to inject the correct title.
-    name: name,
-    resolve: {
-      alias: {
-        '@': resolve('src')
+  configureWebpack: config => {
+    config.entry.app = './src/renderer/main.js'
+    return {
+      name: name,
+      resolve: {
+        alias: {
+          '@': resolve('src/renderer')
+        }
       }
     }
   },
@@ -67,12 +106,12 @@ module.exports = {
     // set svg-sprite-loader
     config.module
       .rule('svg')
-      .exclude.add(resolve('src/icons'))
+      .exclude.add(resolve('src/renderer/icons'))
       .end()
     config.module
       .rule('icons')
       .test(/\.svg$/)
-      .include.add(resolve('src/icons'))
+      .include.add(resolve('src/renderer/icons'))
       .end()
       .use('svg-sprite-loader')
       .loader('svg-sprite-loader')
@@ -92,6 +131,27 @@ module.exports = {
               inline: /runtime\..*\.js$/
             }])
             .end()
+          config
+            .plugin('copy').tap((args) => [[
+              {
+                from: './preload',
+                to: 'preload',
+                toType: 'dir',
+                ignore: [
+                  'index.html',
+                  '.DS_Store'
+                ]
+              },
+              {
+                from: './public',
+                to: 'public',
+                toType: 'dir',
+                ignore: [
+                  'index.html',
+                  '.DS_Store'
+                ]
+              }
+            ]])
           config
             .optimization.splitChunks({
               chunks: 'all',
