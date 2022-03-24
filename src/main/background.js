@@ -7,14 +7,14 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
-  { scheme: 'app', privileges: { secure: true, standard: true } }
+  { scheme: 'app', privileges: { secure: true, standard: true }}
 ])
 
 async function createWindow() {
   // Create the browser window.
-  let size = screen.getPrimaryDisplay().workAreaSize
-  let width = parseInt(size.width * 0.9)
-  let height = parseInt(size.height * 0.9)
+  const size = screen.getPrimaryDisplay().workAreaSize
+  const width = parseInt(size.width * 0.9)
+  const height = parseInt(size.height * 0.9)
   const win = new BrowserWindow({
     width: width,
     height: height,
@@ -24,7 +24,7 @@ async function createWindow() {
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       contextIsolation: true,
       nodeIntegration: process.env.NODE_ENV !== 'production',
-      webSecurity: false,     // it will disable the same-origin policy(unsafe).
+      webSecurity: false, // it will disable the same-origin policy(unsafe).
       preload: path.resolve(__dirname, 'preload.js')
     },
     show: false
@@ -112,8 +112,8 @@ app.on('activate', () => {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-var tray = null
-app.on('ready', async () => {
+let tray
+app.on('ready', async() => {
   if (isDevelopment && !process.env.IS_TEST) {
     // Install Vue Devtools
     console.log('开发模式:', VUEJS_DEVTOOLS)
@@ -124,7 +124,10 @@ app.on('ready', async () => {
     }
   } else {
     // 设置托盘
-    // tray = new Tray(path.resolve(__dirname, 'public/icon.png'))
+    tray = new Tray(path.resolve(__dirname, 'public/icon.png'))
+    tray.setContextMenu(null)
+    tray.setToolTip('unify image process')
+    tray.setTitle('unify image process')
   }
   createWindow()
 })
@@ -148,7 +151,6 @@ if (isDevelopment) {
     })
   }
 }
-
 
 // //创建代理
 // var express = require('express');
